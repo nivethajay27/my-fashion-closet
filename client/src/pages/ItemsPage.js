@@ -39,9 +39,23 @@ export default function ItemsPage() {
   };
 
   return (
-    <div className="container">
-      <div className="page-kicker">Virtual closet</div>
-      <h1 className="section-title">Curate pieces by style, season, and occasion.</h1>
+    <div className="container home-page">
+      <span className="material-symbols-rounded home-decor cloud-decor" aria-hidden="true">cloud</span>
+      <span className="material-symbols-rounded home-decor heart-decor" aria-hidden="true">favorite</span>
+      <span className="material-symbols-rounded home-decor sparkle-decor sparkle-one" aria-hidden="true">auto_awesome</span>
+      <span className="material-symbols-rounded home-decor sparkle-decor sparkle-two" aria-hidden="true">checkroom</span>
+      <section className="home-hero">
+        <div>
+          <div className="page-kicker">Virtual closet</div>
+          <h1 className="section-title">Curate pieces by style, season, and occasion.</h1>
+        </div>
+        <div className="hero-orbit" aria-hidden="true">
+          <span className="material-symbols-rounded orbit-icon">checkroom</span>
+          <span>Style</span>
+          <span>Try on</span>
+          <span>Score</span>
+        </div>
+      </section>
       <ItemForm onSubmit={create} />
       {error && <div className="notice">{error}</div>}
       <ClosetGrid items={items} onDelete={remove} />
