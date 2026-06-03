@@ -1,33 +1,50 @@
 import { useEffect, useState } from 'react';
 import { Items } from '../api';
-import ItemCard from '../components/ItemCard';
+import ClosetGrid from '../components/ClosetGrid';
 import ItemForm from '../components/ItemForm';
+import { sampleWardrobe } from '../sampleWardrobe';
 
 export default function ItemsPage() {
   const [items, setItems] = useState([]);
+  const [error, setError] = useState('');
 
-  useEffect(() => { Items.list().then(setItems); }, []);
+  useEffect(() => {
+    Items.list()
+      .then(setItems)
+      .catch((e) => {
+        setItems(sampleWardrobe);
+        setError(`Using demo wardrobe because the API is unavailable: ${e.message}`);
+      });
+  }, []);
 
   const create = async (payload) => {
-    const created = await Items.create(payload);
-    setItems((prev) => [created, ...prev]);
+    try {
+      const created = await Items.create(payload);
+      setItems((prev) => [created, ...prev]);
+      setError('');
+    } catch (e) {
+      const demoItem = { ...payload, id: Date.now() };
+      setItems((prev) => [demoItem, ...prev]);
+      setError(`Saved locally for this session because the API is unavailable: ${e.message}`);
+    }
   };
 
   const remove = async (id) => {
-    await Items.remove(id);
+    try {
+      await Items.remove(id);
+    } catch (_e) {
+      // Demo fallback still removes the item from the visible closet.
+    }
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   return (
     <div className="container">
-      <h1 className="section-title">Items</h1>
+      <div className="page-kicker">Virtual closet</div>
+      <h1 className="section-title">Curate pieces by style, season, and occasion.</h1>
       <ItemForm onSubmit={create} />
-      <div className="grid">
-        {items.map((i) => (
-          <ItemCard key={i.id} item={i} onDelete={() => remove(i.id)} />
-        ))}
-      </div>
+      {error && <div className="notice">{error}</div>}
+      <ClosetGrid items={items} onDelete={remove} />
     </div>
   );
 }
-

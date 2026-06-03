@@ -9,6 +9,7 @@ export default function OutfitsPage() {
   useEffect(() => {
     Outfits.list()
       .then(setOutfits)
+      .catch(() => setOutfits(JSON.parse(localStorage.getItem('savedOutfits') || '[]')))
       .finally(() => setLoading(false));
   }, []);
 

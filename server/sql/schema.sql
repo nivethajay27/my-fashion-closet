@@ -1,9 +1,11 @@
 CREATE TABLE IF NOT EXISTS clothing_items (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('top','bottom','shoes','accessory')),
+  category TEXT NOT NULL CHECK (category IN ('top','bottom','dress','shoes','accessory','outerwear')),
   color TEXT,
+  material TEXT,
   season TEXT[] DEFAULT '{}',
+  occasion TEXT[] DEFAULT '{}',
   tags TEXT[] DEFAULT '{}',
   image_url TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now()
@@ -12,6 +14,9 @@ CREATE TABLE IF NOT EXISTS clothing_items (
 CREATE TABLE IF NOT EXISTS outfits (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
+  rating INT,
+  score_breakdown JSONB DEFAULT '{}'::jsonb,
+  explanation TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

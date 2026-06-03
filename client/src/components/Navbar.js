@@ -10,10 +10,9 @@ export default function Navbar() {
       <div className="navbar-inner">
         <div className="brand">Fashion Closet</div>
         <Tab to="/">Items</Tab>
-        <Tab to="/builder">Builder</Tab>
+        <Tab to="/builder">Stylist</Tab>
         <Tab to="/outfits">Outfits</Tab> 
       </div>
     </header>
   );
 }
-
