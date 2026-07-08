@@ -9,9 +9,15 @@ export default function Navbar() {
     <header className="navbar">
       <div className="navbar-inner">
         <div className="brand">Fashion Closet</div>
-        <Tab to="/">Items</Tab>
+        <Tab to="/today">Today</Tab>
+        <Tab to="/style-goals">Goals</Tab>
+        <Tab to="/">Closet</Tab>
+        <Tab to="/upload">Upload</Tab>
         <Tab to="/builder">Stylist</Tab>
-        <Tab to="/outfits">Outfits</Tab> 
+        <Tab to="/outfits">Planner</Tab> 
+        <Tab to="/trips">Trips</Tab>
+        <Tab to="/wishlist">Wishlist</Tab>
+        <Tab to="/inspiration">Inspo</Tab>
       </div>
     </header>
   );

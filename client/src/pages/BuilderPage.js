@@ -4,13 +4,8 @@ import OutfitResultsPage from '../components/OutfitResultsPage';
 import StylePreferencesSettings from '../components/StylePreferencesSettings';
 import { CATEGORIES, cycleCategory, generateStyledOutfit, scoreOutfit } from '../stylingEngine';
 import { sampleWardrobe } from '../sampleWardrobe';
-
-const defaultPreferences = {
-  preferredStyles: ['minimal'],
-  dislikedColors: [],
-  bodyType: '',
-  fashionGoals: ['casual']
-};
+import { defaultStyleProfile, loadStyleProfile, saveStyleProfile } from '../styleProfile';
+import { mergeWardrobe } from '../closetStorage';
 
 const defaultContext = {
   weather: 'spring',
@@ -22,11 +17,12 @@ export default function BuilderPage() {
   const [items, setItems] = useState([]);
   const [result, setResult] = useState(null);
   const [lockedIds, setLockedIds] = useState([]);
-  const [preferences, setPreferences] = useState(defaultPreferences);
+  const [preferences, setPreferences] = useState(defaultStyleProfile);
   const [context, setContext] = useState(defaultContext);
 
   useEffect(() => {
-    Items.list().then(setItems).catch(() => setItems(sampleWardrobe));
+    Items.list().then((rows) => setItems(mergeWardrobe(rows))).catch(() => setItems(mergeWardrobe(sampleWardrobe)));
+    setPreferences(loadStyleProfile());
   }, []);
   const byCat = useMemo(
     () => Object.fromEntries(CATEGORIES.map((c) => [c, items.filter((i) => i.category === c)])),
@@ -110,7 +106,10 @@ export default function BuilderPage() {
         <StylePreferencesSettings
           preferences={preferences}
           context={context}
-          onPreferencesChange={setPreferences}
+          onPreferencesChange={(nextPreferences) => {
+            setPreferences(nextPreferences);
+            saveStyleProfile(nextPreferences);
+          }}
           onContextChange={setContext}
         />
         <OutfitResultsPage

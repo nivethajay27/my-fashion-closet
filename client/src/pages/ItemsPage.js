@@ -3,6 +3,7 @@ import { Items } from '../api';
 import ClosetGrid from '../components/ClosetGrid';
 import ItemForm from '../components/ItemForm';
 import { sampleWardrobe } from '../sampleWardrobe';
+import { addLocalWardrobeItem, mergeWardrobe, removeLocalWardrobeItem } from '../closetStorage';
 
 export default function ItemsPage() {
   const [items, setItems] = useState([]);
@@ -10,9 +11,9 @@ export default function ItemsPage() {
 
   useEffect(() => {
     Items.list()
-      .then(setItems)
+      .then((rows) => setItems(mergeWardrobe(rows)))
       .catch((e) => {
-        setItems(sampleWardrobe);
+        setItems(mergeWardrobe(sampleWardrobe));
         setError(`Using demo wardrobe because the API is unavailable: ${e.message}`);
       });
   }, []);
@@ -24,6 +25,7 @@ export default function ItemsPage() {
       setError('');
     } catch (e) {
       const demoItem = { ...payload, id: Date.now() };
+      addLocalWardrobeItem(demoItem);
       setItems((prev) => [demoItem, ...prev]);
       setError(`Saved locally for this session because the API is unavailable: ${e.message}`);
     }
@@ -34,26 +36,17 @@ export default function ItemsPage() {
       await Items.remove(id);
     } catch (_e) {
       // Demo fallback still removes the item from the visible closet.
+      removeLocalWardrobeItem(id);
     }
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   return (
     <div className="container home-page">
-      <span className="material-symbols-rounded home-decor cloud-decor" aria-hidden="true">cloud</span>
-      <span className="material-symbols-rounded home-decor heart-decor" aria-hidden="true">favorite</span>
-      <span className="material-symbols-rounded home-decor sparkle-decor sparkle-one" aria-hidden="true">auto_awesome</span>
-      <span className="material-symbols-rounded home-decor sparkle-decor sparkle-two" aria-hidden="true">checkroom</span>
       <section className="home-hero">
         <div>
           <div className="page-kicker">Virtual closet</div>
           <h1 className="section-title">Curate pieces by style, season, and occasion.</h1>
-        </div>
-        <div className="hero-orbit" aria-hidden="true">
-          <span className="material-symbols-rounded orbit-icon">checkroom</span>
-          <span>Style</span>
-          <span>Try on</span>
-          <span>Score</span>
         </div>
       </section>
       <ItemForm onSubmit={create} />
